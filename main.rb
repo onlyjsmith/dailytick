@@ -1,5 +1,8 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
+require 'haml'
+require 'data_mapper'
+
 require 'awesome_print' if development?
 require 'date'
 
@@ -7,76 +10,34 @@ require 'date'
 class Challenge
   # To start, will only have one challenge - "go running"
   attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
-
+  include DataMapper::Resource
+  
+  property :aim, String
+  property :description, String
+  property :first, DateTime
+  property :longest_chain, Integer
+  
   def initialize
     system('clear')
     # parse_record
   end 
   
   def setup_sample
-    @chain_record = [1,1,1,1,1,0,0,1,1]
-    @aim = "Go running"
-    @description = "At least 15 minutes every day"
-    @first = Date.parse('2011-09-11')
-    @longest_chain = 5
-    @time_since_tick = 0
-    @duration = 9
-    @done = 7
-    @missed = 2
-    @current_chain = 2
-    @time_since_longest = 4
+    DataMapper.setup(:default, "sqlite3:challenge.db")    
+    self.chain_record = [1,1,1,1,1,0,0,1,1]
+    self.aim = "Go running"
+    self.description = "At least 15 minutes every day"
+    self.first = Date.parse('2011-09-11')
+    self.longest_chain = 5
+    self.time_since_tick = 0
+    self.duration = 9
+    self.done = 7
+    self.missed = 2
+    self.current_chain = 2
+    self.time_since_longest = 4
+    self.save
   end 
 
-  def display_detail
-    system('clear')
-    puts "===="
-    puts "Aim: #{@aim}" 
-    puts "Description: #{@description}" 
-    puts "Started on: #{@first}"
-    puts "Duration: #{@duration}"
-    puts "Longest chain: " + "#{@longest_chain}".green + " days, which was #{@time_since_longest} days ago"
-    puts "Current chain: "+ "#{@current_chain}".yellow + " days"
-    puts "Done: #{@done}"
-    puts "Missed: #{@missed}"
-    puts "Total: #{@done + @missed}"
-    puts "Time since tick: "+ "#{@time_since_tick}".red# if @time_since_tick != 0
-    puts "Record: #{@chain_record}"# (last 20 days only)"
-    puts "----"
-  end
-
-  def display_chain
-    @chain_record.each do |r|
-      print r
-    end
-  end          
-
-  def get_input
-    display_detail
-    puts; puts "Menu"; puts "----"
-    puts "Enter 'a' to add another link"
-    puts "Enter 'd' to get description of challenge"
-    puts "Enter 'm' to miss a day"
-    puts "Enter 'p' to force parsing"
-    puts "Enter 'q' to quit"  
-    a = gets.chomp
-    case a
-      when 'a' 
-        update(1)
-      when 'd' 
-        display_detail
-      when 'm'
-        update(0)
-      when 'p'
-        parse_record
-      when 'q' 
-        exit
-      when 's'
-        update(0)
-    end
-    get_input
-    system('clear')
-  end      
-   
   def check_if_longest
     if @current_chain >= @longest_chain
       then @longest_chain = @current_chain
@@ -119,7 +80,8 @@ class Web
   set :environment, :development
   
   get '/' do
-    "Helo wod"
+    # 'Helo wod'
+    haml :index
   end
 
   get '/setup' do
@@ -129,21 +91,11 @@ class Web
   end
   
   get '/display' do
-    ap @c
-    "===="
-    "Aim: #{@aim}" 
-    "Description: #{@description}" 
-    "Started on: #{@first}"
-    "Duration: #{@duration}"
-    "Longest chain: #{@longest_chain} days, which was #{@time_since_longest} days ago"
-    "Current chain: #{@current_chain} days"
-    "Done: #{@done}"
-    "Missed: #{@missed}"
-    "Total: #{@done + @missed}"
-    "Time since tick: "+ "#{@time_since_tick}"
-    "Record: #{@chain_record}"# (last 20 days only)"
-    "----"    
+    @c = Challenge.new#.setup_sample
+    @c.setup_sample
+    haml :display
   end
+  
     
 end
 
