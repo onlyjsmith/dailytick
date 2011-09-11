@@ -7,7 +7,8 @@ require 'ruby-debug'
 require 'awesome_print' if development?
 require 'date'
 
-DataMapper::setup(:default, "sqlite3:challenge.db")
+# DataMapper::setup(:default, "sqlite3:challenge.db")
+DataMapper.setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
 
 class Challenge
   include DataMapper::Resource
