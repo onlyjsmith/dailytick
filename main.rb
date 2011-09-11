@@ -1,5 +1,5 @@
 require 'sinatra'
-require 'sinatra/reloader' if development?
+# require 'sinatra/reloader' if development?
 require 'haml'
 require 'datamapper'
 require 'ruby-debug'
@@ -17,14 +17,15 @@ class Challenge
   property :description, String
   property :duration, Integer
   property :longest_chain, Integer
-  property :current_chain, Integer 
+  property :current_chain, Integer
+  # property :time_since_longest, Integer 
   property :done, Integer
   property :missed, Integer
   property :chain_record, String
   
   def check_if_longest
-    if @current_chain >= @longest_chain
-      then @longest_chain = @current_chain
+    if self.current_chain >= self.longest_chain
+      then self.longest_chain = self.current_chain
     end
   end
 
