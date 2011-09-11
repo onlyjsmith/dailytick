@@ -1,41 +1,16 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'haml'
-require 'data_mapper'
-require 'dm-core'
-require 'dm-validations'
+# require 'active_record'
 
 require 'awesome_print' if development?
 require 'date'
 
-configure :development do
-  DataMapper.setup(:default, {
-    :adapter  => 'sqlite',
-    :database => 'challenge.db'})  
-
-  # DataMapper::Logger.new(STDOUT, :debug)
-end
-
 
 class Challenge
-  # To start, will only have one challenge - "go running"
-  # attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
-  include DataMapper::Resource
-  
-  property :aim, String
-  property :description, String
-  # property :first, DateTime
-  property :longest_chain, Integer
-  property :current_chain, Integer
-  
-  def initialize
-    system('clear')
-    # parse_record
-  end 
+  attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
   
   def setup_sample
-    DataMapper.auto_migrate!
-    # DataMapper.setup(:default, "sqlite3:challenge.db")    
     self.chain_record = [1,1,1,1,1,0,0,1,1]
     self.aim = "Go running"
     self.description = "At least 15 minutes every day"
@@ -86,13 +61,10 @@ class Challenge
   #     @chain_record = @chain_record[length-20..length]
   #   end
   end    
-end
 
-class Web
   set :environment, :development
   
   get '/' do
-    # 'Helo wod'
     haml :index
   end
 
@@ -107,8 +79,8 @@ class Web
     @c.setup_sample
     haml :display
   end
+end
   
     
-end
 
 # c.get_input
