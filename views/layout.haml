@@ -3,10 +3,20 @@
   %head
     %title
       = @title || 'DailyTick'
-    / %link{:rel => "stylesheet", :href => "/application.css", :type => "text/css", :media => "all"}
     %link{:rel => "stylesheet", :href => "http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css"}
+    %link{:rel => "stylesheet", :href => "additional.css"}
   %body
-    %div{:id => "contents"}
-      %span{:id => "logo"}
-      %span{:id => "title"} DailyTick
-      = yield
+    .topbar-wrapper
+      .topbar
+        .topbar-inner
+          .container
+            %h3
+              %a{:href => "#"} DailyTick, innit
+            .nav
+              .inactive 
+                %a{:href => '/table'} View table
+            .nav
+              .inactive 
+                %a{:href => '/setup'} Setup new one
+
+    = yield

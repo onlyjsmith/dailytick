@@ -10,38 +10,18 @@ require 'date'
 DataMapper::setup(:default, "sqlite3:challenge.db")
 
 class Challenge
-  # To start, will only have one challenge - "go running"
-  # attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
   include DataMapper::Resource
 
   property :id, Serial
   property :aim, String
   property :description, String
-  # property :first, DateTime
   property :duration, Integer
   property :longest_chain, Integer
   property :current_chain, Integer 
   property :done, Integer
   property :missed, Integer
-
+  property :chain_record, String
   
-  def setup_sample
-    DataMapper.auto_migrate!
-    # DataMapper.setup(:default, "sqlite3:challenge.db")    
-    self.chain_record = [1,1,1,1,1,0,0,1,1]
-    self.aim = "Go running"
-    self.description = "At least 15 minutes every day"
-    self.first = Date.parse('2011-09-11')
-    self.longest_chain = 5
-    self.time_since_tick = 0
-    self.duration = 9
-    self.done = 7
-    self.missed = 2
-    self.current_chain = 2
-    self.time_since_longest = 4
-    self.save
-  end 
-
   def check_if_longest
     if @current_chain >= @longest_chain
       then @longest_chain = @current_chain
@@ -60,12 +40,16 @@ class Challenge
       self.current_chain += 1
       self.done += 1
       # @time_since_tick = 0
-      # @chain_record << 1
+      new_chain = self.chain_record.split("")
+      new_chain = new_chain.push("1").join
+      self.chain_record = new_chain
     else
       self.current_chain = 0
       # @time_since_tick += 1
       self.missed += 1
-      # @chain_record << 0
+      new_chain = self.chain_record.split("")
+      new_chain = new_chain.push("0").join
+      self.chain_record = new_chain
     end
     self.duration += 1
     check_if_longest
@@ -78,6 +62,13 @@ class Challenge
   #   if length > 20
   #     @chain_record = @chain_record[length-20..length]
   #   end
+  end
+  
+  def format_table
+    chain_record = Challenge.last.chain_record
+    chain_record_array = chain_record.split("")
+    chain_record_array.push("2")
+    table = chain_record_array.each_slice(7).to_a
   end    
 end
 
@@ -87,14 +78,10 @@ class Web
   set :environment, :development
   
   get '/' do
-    # 'Helo wod'
-    @c = Challenge.get(:all)
     haml :index
   end
 
   get '/setup' do
-    # @c = Challenge.new
-    # @c.setup_sample
     Challenge.create(
       :aim => "new one", 
       :description => "Go running for 15 mins", 
@@ -102,38 +89,47 @@ class Web
       :longest_chain => 5,
       :current_chain => 2,
       :done => 7,
-      :missed => 2
+      :missed => 2,
+      :chain_record => '110011'
       )
     "Made new resource"
+
+    @c = Challenge.last
+    @table = @c.format_table
+    haml :table
   end
   
   get '/display' do
-    # @c = Challenge.new#.setup_sample
-    # @c.setup_sample
-    @c = Challenge.first
-    puts "@c is #{@c}" 
+    @c = Challenge.last
     haml :display
   end
   
   
   get '/done' do
-    @c = Challenge.first
-    # debugger
+    @c = Challenge.last
     @c.update(1)
-    haml :display
+    @table = @c.format_table
+    @id = Challenge.last.id
+    haml :table
   end
 
   get '/missed' do
-    @c = Challenge.first
-    @c.update(0)
-    haml :display
+    @c = Challenge.last
+    @c.update(0) 
+    @table = @c.format_table
+    @id = Challenge.last.id
+    haml :table
   end
 
   # get '/create' do
   #   haml :
   # end
   
+  get '/table' do
+    @c = Challenge.last
+    @table = @c.format_table
+    @id = Challenge.last.id
+    haml :table
+  end
     
 end
-
-# c.get_input

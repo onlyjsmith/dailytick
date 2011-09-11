@@ -2,6 +2,12 @@
   .row
     %h1 Current challenge info
     .span4.columns
+      %h3
+        ID:
+        %em= @c.id
+      %h3
+        Chain:
+        %em= @c.chain_record
       %h3 
         Aim: 
         %em= @c.aim
@@ -39,11 +45,11 @@
       /   %em
       /   = @c.time_since_tick   
 
-      .span6.columns
-        %a{:href => "/done"}
-          %img{:src => "done.jpeg", :alt => "DONE"}
-            %a.btn.large.primary{:href => "/done"} DONE
-        %a{:href => "/missed"}
-          %img{:src => "fail.jpeg", :akt => "FAIL"}
-            %a.btn.large.danger{:href => "/done"} FAILED
+    .span6.columns
+      %a{:href => "/done"}
+        %img{:src => "done.jpeg", :alt => "DONE"}
+          %a.btn.large.primary{:href => "/done"} DONE
+      %a{:href => "/missed"}
+        %img{:src => "fail.jpeg", :akt => "FAIL"}
+          %a.btn.large.danger{:href => "/done"} FAILED
     

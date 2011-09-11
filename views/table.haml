@@ -1,0 +1,64 @@
+.container
+  %h2.page-header
+    The DailyTick 
+    / %em< 
+    /   (for task ID:
+    /   = @id
+    /   )
+  %table
+    %tbody
+      - @table.each do |row|
+        %tr
+          - row.each do |column|
+            - if column == "1"
+              %td.record_cell_done &#10003
+            - elsif column == "0"
+              %td.record_cell_fail X
+            - elsif column == "2"
+              %td.well
+                %a.btn.success{:href => "/done"} DONE
+                %a.btn.danger{:href => "/missed"} FAILED
+
+.container 
+  .row.well
+    %h3 Current challenge info
+    .span4.columns
+      / %h3
+      /   ID:
+      /   %em= @c.id
+      / %h3
+      /   Chain:
+      /   %em= @c.chain_record
+      %h4 
+        Aim: 
+        %p= @c.aim
+      %h4
+        Description:
+        %p= @c.description
+    .span4.columns
+      %h4
+        Duration:
+        %p<
+          = @c.duration
+          days
+      %h4
+        Longest chain:
+        %p<
+          = @c.longest_chain
+          days 
+          / (which was 
+          / = @c.time_since_longest
+          / days ago)
+      %h4
+        Current chain:
+        %p<
+          = @c.current_chain
+          days
+    .span4.columns 
+      %h4
+        Done:
+        %p
+          = @c.done
+        Missed:
+        %p
+          = @c.missed

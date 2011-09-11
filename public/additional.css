@@ -1,0 +1,21 @@
+.container {
+  width: 60%;
+}
+
+.body {
+  padding-top: 40px;
+}
+.record_cell_done {
+  font-size: 250%;
+  color: green;
+  line-height:70px;
+  width: 80px;
+}
+
+.record_cell_fail {
+  font-size: 250%;
+  color: red;
+  line-height:70px;
+  width: 80px;
+}
+
