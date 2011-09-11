@@ -1,5 +1,8 @@
 require 'sinatra'
+require 'sinatra/reloader' if development?
+require 'awesome_print' if development?
 require 'date'
+
 
 class Challenge
   # To start, will only have one challenge - "go running"
@@ -112,18 +115,36 @@ class Challenge
   end    
 end
 
-class String
+class Web
+  set :environment, :development
+  
+  get '/' do
+    "Helo wod"
+  end
 
-    def red; colorize(self, "\e[1m\e[31m"); end
-    def green; colorize(self, "\e[1m\e[32m"); end
-    def dark_green; colorize(self, "\e[32m"); end
-    def yellow; colorize(self, "\e[1m\e[33m"); end
-    def blue; colorize(self, "\e[1m\e[34m"); end
-    def dark_blue; colorize(self, "\e[34m"); end
-    def pur; colorize(self, "\e[1m\e[35m"); end
-    def colorize(text, color_code)  "#{color_code}#{text}\e[0m" end
+  get '/setup' do
+    @c = Challenge.new
+    @c.setup_sample
+    "Done setting up"
+  end
+  
+  get '/display' do
+    ap @c
+    "===="
+    "Aim: #{@aim}" 
+    "Description: #{@description}" 
+    "Started on: #{@first}"
+    "Duration: #{@duration}"
+    "Longest chain: #{@longest_chain} days, which was #{@time_since_longest} days ago"
+    "Current chain: #{@current_chain} days"
+    "Done: #{@done}"
+    "Missed: #{@missed}"
+    "Total: #{@done + @missed}"
+    "Time since tick: "+ "#{@time_since_tick}"
+    "Record: #{@chain_record}"# (last 20 days only)"
+    "----"    
+  end
+    
 end
 
-c = Challenge.new
-c.setup_sample
-c.get_input
+# c.get_input
