@@ -14,9 +14,10 @@
   Longest chain:
   %em<
     = @c.longest_chain
-    days (which was 
-    = @c.time_since_longest
-    days ago)
+    days 
+    / (which was 
+    / = @c.time_since_longest
+    / days ago)
 %h3
   Current chain:
   %em<
@@ -29,7 +30,10 @@
   Missed:
   %em
     = @c.missed
-%h3 
-  Time since last tick:
-  %em
-  = @c.time_since_tick
+/ %h3 
+/   Time since last tick:
+/   %em
+/   = @c.time_since_tick   
+
+%p <a href="/done">DONE another day</a>
+%p <a href="/missed">MISSED another day</a>
