@@ -1,0 +1,12 @@
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %title
+      = @title || 'DailyTick'
+    / %link{:rel => "stylesheet", :href => "/application.css", :type => "text/css", :media => "all"}
+    %link{:rel => "stylesheet", :href => "http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css"}
+  %body
+    %div{:id => "contents"}
+      %span{:id => "logo"}
+      %span{:id => "title"} DailyTick
+      = yield

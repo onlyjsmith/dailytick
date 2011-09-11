@@ -1,39 +1,49 @@
-%h1 Current challenge info
-%h3 
-  Aim: 
-  %em= @c.aim
-%h3
-  Description:
-  %em= @c.description
-%h3
-  Duration:
-  %em<
-    = @c.duration
-    days
-%h3
-  Longest chain:
-  %em<
-    = @c.longest_chain
-    days 
-    / (which was 
-    / = @c.time_since_longest
-    / days ago)
-%h3
-  Current chain:
-  %em<
-    = @c.current_chain
-    days
-%h3
-  Done:
-  %em
-    = @c.done
-  Missed:
-  %em
-    = @c.missed
-/ %h3 
-/   Time since last tick:
-/   %em
-/   = @c.time_since_tick   
+.container 
+  .row
+    %h1 Current challenge info
+    .span4.columns
+      %h3 
+        Aim: 
+        %em= @c.aim
+      %h3
+        Description:
+        %em= @c.description
+    .span6.columns
+      %h3
+        Duration:
+        %em<
+          = @c.duration
+          days
+      %h3
+        Longest chain:
+        %em<
+          = @c.longest_chain
+          days 
+          / (which was 
+          / = @c.time_since_longest
+          / days ago)
+      %h3
+        Current chain:
+        %em<
+          = @c.current_chain
+          days
+      %h3
+        Done:
+        %em
+          = @c.done
+        Missed:
+        %em
+          = @c.missed
+      / %h3 
+      /   Time since last tick:
+      /   %em
+      /   = @c.time_since_tick   
 
-%p <a href="/done">DONE another day</a>
-%p <a href="/missed">MISSED another day</a>
+      .span6.columns
+        %a{:href => "/done"}
+          %img{:src => "done.jpeg", :alt => "DONE"}
+            %a.btn.large.primary{:href => "/done"} DONE
+        %a{:href => "/missed"}
+          %img{:src => "fail.jpeg", :akt => "FAIL"}
+            %a.btn.large.danger{:href => "/done"} FAILED
+    
