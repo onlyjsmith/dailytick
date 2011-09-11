@@ -1,37 +1,26 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'haml'
-require 'data_mapper'
-require 'dm-core'
-require 'dm-validations'
+require 'datamapper'
 
 require 'awesome_print' if development?
 require 'date'
 
-configure :development do
-  DataMapper.setup(:default, {
-    :adapter  => 'sqlite',
-    :database => 'challenge.db'})  
-
-  # DataMapper::Logger.new(STDOUT, :debug)
-end
+DataMapper::setup(:default, "sqlite3:challenge.db")
 
 
 class Challenge
   # To start, will only have one challenge - "go running"
   # attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
   include DataMapper::Resource
-  
+
+  property :id, Serial
   property :aim, String
   property :description, String
   # property :first, DateTime
   property :longest_chain, Integer
   property :current_chain, Integer
-  
-  def initialize
-    system('clear')
-    # parse_record
-  end 
+
   
   def setup_sample
     DataMapper.auto_migrate!
@@ -88,23 +77,28 @@ class Challenge
   end    
 end
 
+Challenge.auto_migrate! unless Challenge.storage_exists?
+
 class Web
   set :environment, :development
   
   get '/' do
     # 'Helo wod'
+    @c = Challenge.get(:all)
     haml :index
   end
 
   get '/setup' do
-    @c = Challenge.new
-    @c.setup_sample
-    "Done setting up"
+    # @c = Challenge.new
+    # @c.setup_sample
+    Challenge.create(:aim => "new one")
+    "Made new resource"
   end
   
   get '/display' do
-    @c = Challenge.new#.setup_sample
-    @c.setup_sample
+    # @c = Challenge.new#.setup_sample
+    # @c.setup_sample
+    @c = Challenge.get
     haml :display
   end
   
