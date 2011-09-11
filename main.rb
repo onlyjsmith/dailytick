@@ -2,20 +2,31 @@ require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'haml'
 require 'data_mapper'
+require 'dm-core'
+require 'dm-validations'
 
 require 'awesome_print' if development?
 require 'date'
 
+configure :development do
+  DataMapper.setup(:default, {
+    :adapter  => 'sqlite',
+    :database => 'challenge.db'})  
+
+  # DataMapper::Logger.new(STDOUT, :debug)
+end
+
 
 class Challenge
   # To start, will only have one challenge - "go running"
-  attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
+  # attr_accessor :aim, :description, :first, :longest_chain, :time_since_longest, :current_chain, :duration, :chain_record, :time_since_tick, :done, :missed
   include DataMapper::Resource
   
   property :aim, String
   property :description, String
-  property :first, DateTime
+  # property :first, DateTime
   property :longest_chain, Integer
+  property :current_chain, Integer
   
   def initialize
     system('clear')
@@ -23,7 +34,8 @@ class Challenge
   end 
   
   def setup_sample
-    DataMapper.setup(:default, "sqlite3:challenge.db")    
+    DataMapper.auto_migrate!
+    # DataMapper.setup(:default, "sqlite3:challenge.db")    
     self.chain_record = [1,1,1,1,1,0,0,1,1]
     self.aim = "Go running"
     self.description = "At least 15 minutes every day"
