@@ -1,3 +1,4 @@
+require 'sinatra'
 require 'date'
 
 class Challenge
@@ -6,33 +7,45 @@ class Challenge
 
   def initialize
     system('clear')
+    # parse_record
+  end 
+  
+  def setup_sample
+    @chain_record = [1,1,1,1,1,0,0,1,1]
     @aim = "Go running"
     @description = "At least 15 minutes every day"
     @first = Date.parse('2011-09-11')
-    @longest_chain = 0
-    @time_since_longest = 0 
-    @current_chain = 0
-    @duration = 0
-    @chain_record = [1,1,1,1,1,0,0,1,1]
+    @longest_chain = 5
     @time_since_tick = 0
-    @done = 0
-    @missed = 0
-    parse_record
-  end  
+    @duration = 9
+    @done = 7
+    @missed = 2
+    @current_chain = 2
+    @time_since_longest = 4
+  end 
 
   def display_detail
     system('clear')
     puts "===="
     puts "Aim: #{@aim}" 
-    puts "Description: #{@description}"
-    puts "Longest chain: #{@longest_chain} days, which was #{@time_since_longest} days ago"
-    puts "Current chain: #{@current_chain} days"
+    puts "Description: #{@description}" 
+    puts "Started on: #{@first}"
+    puts "Duration: #{@duration}"
+    puts "Longest chain: " + "#{@longest_chain}".green + " days, which was #{@time_since_longest} days ago"
+    puts "Current chain: "+ "#{@current_chain}".yellow + " days"
     puts "Done: #{@done}"
     puts "Missed: #{@missed}"
-    puts "Time since tick: #{@time_since_tick}" if @time_since_tick != 0
+    puts "Total: #{@done + @missed}"
+    puts "Time since tick: "+ "#{@time_since_tick}".red# if @time_since_tick != 0
     puts "Record: #{@chain_record}"# (last 20 days only)"
     puts "----"
   end
+
+  def display_chain
+    @chain_record.each do |r|
+      print r
+    end
+  end          
 
   def get_input
     display_detail
@@ -45,40 +58,22 @@ class Challenge
     a = gets.chomp
     case a
       when 'a' 
-        add_new_tick
+        update(1)
       when 'd' 
         display_detail
       when 'm'
-        miss_a_day
+        update(0)
       when 'p'
         parse_record
       when 'q' 
         exit
       when 's'
-        miss_a_day
+        update(0)
     end
     get_input
     system('clear')
   end      
    
-  def parse_record
-    @duration = @chain_record.size
-    @current_chain = 0; @longest_chain = 0
-    count = 0; @chain_record.each{|r| count += 1 if r == 0}; @missed = count
-    @chain_record.each do |record|
-      if record == 1
-        @current_chain += 1
-        @time_since_tick = 0
-        check_if_longest
-      else
-        @current_chain = 0
-        @time_since_tick += 1
-      end
-    end
-    check_time_since_longest
-    shorten_record
-  end
- 
   def check_if_longest
     if @current_chain >= @longest_chain
       then @longest_chain = @current_chain
@@ -92,25 +87,22 @@ class Challenge
     end
   end
 
-  def display_chain
-    @chain_record.each do |r|
-      print r
+  def update(action) # 0 = missed, 1 = done
+    if action == 1
+      @current_chain += 1
+      @done += 1
+      @time_since_tick = 0
+      @chain_record << 1
+    else
+      @current_chain = 0
+      @time_since_tick += 1
+      @missed += 1
+      @chain_record << 0
     end
-  end          
-
-
-  def add_new_tick
-    # puts "Adding new tick - well done!"
-    @chain_record << 1
-    parse_record
+    @duration += 1
+    check_if_longest
+    check_time_since_longest
   end
-
-  def miss_a_day
-    @chain_record << 0
-    parse_record
-  end  
-
-
 
   def shorten_record
   #   length = @chain_record.size
@@ -120,6 +112,18 @@ class Challenge
   end    
 end
 
+class String
+
+    def red; colorize(self, "\e[1m\e[31m"); end
+    def green; colorize(self, "\e[1m\e[32m"); end
+    def dark_green; colorize(self, "\e[32m"); end
+    def yellow; colorize(self, "\e[1m\e[33m"); end
+    def blue; colorize(self, "\e[1m\e[34m"); end
+    def dark_blue; colorize(self, "\e[34m"); end
+    def pur; colorize(self, "\e[1m\e[35m"); end
+    def colorize(text, color_code)  "#{color_code}#{text}\e[0m" end
+end
 
 c = Challenge.new
+c.setup_sample
 c.get_input
